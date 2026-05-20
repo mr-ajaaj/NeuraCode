@@ -7,9 +7,18 @@ export default function ChatWindow() {
     { text: "Hello 👋 I'm NeuraCode", isUser: false },
   ]);
 
+  const handleSendMessage = (text) => {
+    const newMessage = {
+      text: text,
+      isUser: true,
+    };
+
+    setMessages([...messages, newMessage]);
+  };
+
   return (
     <div className="flex flex-col flex-1">
-      
+
       {/* Messages */}
       <div className="flex-1 p-4 overflow-y-auto space-y-4">
         {messages.map((msg, index) => (
@@ -18,7 +27,7 @@ export default function ChatWindow() {
       </div>
 
       {/* Input */}
-      <InputBox />
+      <InputBox onSend={handleSendMessage} />
     </div>
   );
 }

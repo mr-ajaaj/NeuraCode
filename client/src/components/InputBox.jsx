@@ -1,10 +1,12 @@
 import { useState } from "react";
 
-export default function InputBox() {
+export default function InputBox({ onSend }) {
   const [input, setInput] = useState("");
 
   const handleSend = () => {
-    console.log(input);
+    if (!input.trim()) return;
+
+    onSend(input);
     setInput("");
   };
 
@@ -18,10 +20,7 @@ export default function InputBox() {
         onChange={(e) => setInput(e.target.value)}
       />
 
-      <button
-        onClick={handleSend}
-        className="bg-blue-600 px-4 rounded"
-      >
+      <button onClick={handleSend} className="bg-blue-600 px-4 rounded">
         Send
       </button>
     </div>
