@@ -6,7 +6,7 @@ app.use(cors());
 app.use(express.json());
 
 app.post("/chat", async (req, res) => {
-  const { message } = req.body;
+  const { message, mode } = req.body;
 
   try {
     const response = await fetch("http://localhost:11434/api/generate", {
