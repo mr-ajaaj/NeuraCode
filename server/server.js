@@ -8,6 +8,51 @@ app.use(express.json());
 app.post("/chat", async (req, res) => {
   const { message, mode } = req.body;
 
+  let systemPrompt = "";
+
+  if (mode === "Explain") {
+    systemPrompt = `
+    You are NeuraCode AI.
+
+    Explain programming concepts clearly for beginners.
+
+    Use simple language.
+    Give examples when possible.
+    `;
+  } else if (mode === "Debug") {
+    systemPrompt = `
+    You are NeuraCode AI.
+
+    Find programming errors and explain how to fix them.
+
+    Show:
+    - The problem
+    - Why it happens
+    - The corrected code
+    `;
+  } else if (mode === "Refactor") {
+    systemPrompt = `
+    You are NeuraCode AI.
+
+    Refactor code using best practices.
+
+    Improve:
+    - readability
+    - structure
+    - performance
+
+    Explain the improvements.
+    `;
+  } else {
+    systemPrompt = `
+    You are NeuraCode AI.
+
+    You are an expert programming assistant.
+
+    Help the user with programming tasks.
+    `;
+  }
+
   try {
     const response = await fetch("http://localhost:11434/api/generate", {
       method: "POST",
@@ -17,17 +62,7 @@ app.post("/chat", async (req, res) => {
       body: JSON.stringify({
         model: "mistral",
         prompt: `
-        You are NeuraCode AI.
-
-        You are an expert programming assistant.
-
-        Your tasks:
-        - Explain code clearly
-        - Debug errors
-        - Refactor code
-        - Help beginners learn programming
-
-        Always give clean and structured answers.
+        ${systemPrompt}
 
         User request:
         ${message}
