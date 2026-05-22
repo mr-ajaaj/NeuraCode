@@ -16,7 +16,22 @@ app.post("/chat", async (req, res) => {
       },
       body: JSON.stringify({
         model: "mistral",
-        prompt: message,
+        prompt: `
+        You are NeuraCode AI.
+
+        You are an expert programming assistant.
+
+        Your tasks:
+        - Explain code clearly
+        - Debug errors
+        - Refactor code
+        - Help beginners learn programming
+
+        Always give clean and structured answers.
+
+        User request:
+        ${message}
+        `,
         stream: false,
       }),
     });
