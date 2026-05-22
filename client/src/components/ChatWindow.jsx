@@ -2,7 +2,7 @@ import { useState } from "react";
 import InputBox from "./InputBox";
 import Message from "./Message";
 
-export default function ChatWindow() {
+export default function ChatWindow({ mode }) {
   const [messages, setMessages] = useState([
     { text: "Hello 👋 I'm NeuraCode", isUser: false },
   ]);
@@ -17,7 +17,10 @@ export default function ChatWindow() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({
+          message: text,
+          mode: mode,
+        }),
       });
 
       const data = await res.json();

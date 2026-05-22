@@ -1,4 +1,4 @@
-export default function Sidebar() {
+export default function Sidebar({ mode, setMode }) {
   const modes = ["Auto", "Explain", "Debug", "Refactor"];
 
   return (
@@ -6,12 +6,15 @@ export default function Sidebar() {
       <h1 className="text-xl font-bold mb-6">NeuraCode</h1>
 
       <ul>
-        {modes.map((mode) => (
+        {modes.map((item) => (
           <li
-            key={mode}
-            className="p-2 rounded hover:bg-gray-700 cursor-pointer"
+            key={item}
+            onClick={() => setMode(item)}
+            className={`p-2 rounded cursor-pointer ${
+              mode === item ? "bg-blue-600" : "hover:bg-gray-700"
+            }`}
           >
-            {mode}
+            {item}
           </li>
         ))}
       </ul>
