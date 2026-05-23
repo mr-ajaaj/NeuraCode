@@ -6,7 +6,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export default function Message({ text, isUser }) {
-  const [copied, setCopied] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(null);
 
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
@@ -26,15 +26,17 @@ export default function Message({ text, isUser }) {
                     onClick={() => {
                       navigator.clipboard.writeText(String(children));
 
-                      setCopied(true);
+                      const code = String(children);
+
+                      setCopiedCode(code);
 
                       setTimeout(() => {
-                        setCopied(false);
+                        setCopiedCode(null);
                       }, 2000);
                     }}
                     className="absolute right-2 top-2 bg-gray-700 px-2 py-1 text-sm rounded"
                   >
-                    {copied ? "Copied ✅" : "Copy"}
+                    {copiedCode === String(children) ? "Copied ✅" : "Copy"}
                   </button>
 
                   <SyntaxHighlighter
