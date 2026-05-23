@@ -18,6 +18,9 @@ app.post("/chat", async (req, res) => {
 
     Use simple language.
     Give examples when possible.
+
+    Always format code using markdown code blocks.
+    Specify the programming language.
     `;
   } else if (mode === "Debug") {
     systemPrompt = `
@@ -29,6 +32,9 @@ app.post("/chat", async (req, res) => {
     - The problem
     - Why it happens
     - The corrected code
+
+    Always format code using markdown code blocks.
+    Specify the programming language.
     `;
   } else if (mode === "Refactor") {
     systemPrompt = `
@@ -42,6 +48,9 @@ app.post("/chat", async (req, res) => {
     - performance
 
     Explain the improvements.
+
+    Always format code using markdown code blocks.
+    Specify the programming language.
     `;
   } else {
     systemPrompt = `
@@ -50,6 +59,9 @@ app.post("/chat", async (req, res) => {
     You are an expert programming assistant.
 
     Help the user with programming tasks.
+
+    Always format code using markdown code blocks.
+    Specify the programming language.
     `;
   }
 
