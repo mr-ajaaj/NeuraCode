@@ -18,14 +18,25 @@ export default function Message({ text, isUser }) {
               const match = /language-(\w+)/.exec(className || "");
 
               return !inline && match ? (
-                <SyntaxHighlighter
-                  style={oneDark}
-                  language={match[1]}
-                  PreTag="div"
-                  {...props}
-                >
-                  {String(children).replace(/\n$/, "")}
-                </SyntaxHighlighter>
+                <div className="relative">
+                  <button
+                    onClick={() =>
+                      navigator.clipboard.writeText(String(children))
+                    }
+                    className="absolute right-2 top-2 bg-gray-700 px-2 py-1 text-sm rounded"
+                  >
+                    Copy
+                  </button>
+
+                  <SyntaxHighlighter
+                    style={oneDark}
+                    language={match[1]}
+                    PreTag="div"
+                    {...props}
+                  >
+                    {String(children).replace(/\n$/, "")}
+                  </SyntaxHighlighter>
+                </div>
               ) : (
                 <code className="bg-gray-700 px-1 rounded">{children}</code>
               );
