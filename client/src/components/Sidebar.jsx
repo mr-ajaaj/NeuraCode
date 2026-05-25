@@ -1,4 +1,11 @@
-export default function Sidebar({ mode, setMode }) {
+export default function Sidebar({
+  mode,
+  setMode,
+  chats,
+  createNewChat,
+  currentChatId,
+  selectChat,
+}) {
   const modes = ["Auto", "Explain", "Debug", "Refactor"];
 
   return (
@@ -18,6 +25,25 @@ export default function Sidebar({ mode, setMode }) {
           </li>
         ))}
       </ul>
+      <button
+        onClick={createNewChat}
+        className="w-full bg-blue-600 p-2 rounded mt-6"
+      >
+        + New Chat
+      </button>
+      <div className="mt-4 space-y-2">
+        {chats.map((chat) => (
+          <div
+            key={chat.id}
+            onClick={() => selectChat(chat)}
+            className={`p-2 rounded cursor-pointer ${
+              currentChatId === chat.id ? "bg-gray-700" : "hover:bg-gray-700"
+            }`}
+          >
+            {chat.title}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

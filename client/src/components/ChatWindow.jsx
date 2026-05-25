@@ -2,16 +2,27 @@ import { useState } from "react";
 import InputBox from "./InputBox";
 import Message from "./Message";
 
-export default function ChatWindow({ mode }) {
-  const [messages, setMessages] = useState([
-    { text: "Hello 👋 I'm NeuraCode", isUser: false },
-  ]);
-
+export default function ChatWindow({ mode, chats, setChats, currentChat }) {
   const [isThinking, setIsThinking] = useState(false);
+
+  const messages = currentChat.messages;
+
+  const updateCurrentChatMessages = (newMessages) => {
+    setChats((prevChats) =>
+      prevChats.map((chat) =>
+        chat.id === currentChat.id
+          ? {
+              ...chat,
+              messages: newMessages,
+            }
+          : chat,
+      ),
+    );
+  };
 
   const handleSendMessage = async (text, fileContent = null) => {
     const userMessage = { text, isUser: true };
-    setMessages((prev) => [...prev, userMessage]);
+    updateCurrentChatMessages([...messages, userMessage]);
     setIsThinking(true);
 
     try {
@@ -32,7 +43,11 @@ export default function ChatWindow({ mode }) {
 
       let aiText = "";
 
-      setMessages((prev) => [...prev, { text: "", isUser: false }]);
+      updateCurrentChatMessages([
+        ...messages,
+        userMessage,
+        { text: "", isUser: false },
+      ]);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -43,16 +58,16 @@ export default function ChatWindow({ mode }) {
 
         setIsThinking(false);
 
-        setMessages((prev) => {
-          const updated = [...prev];
-
-          updated[updated.length - 1] = {
+        const updatedMessages = [
+          ...messages,
+          userMessage,
+          {
             text: aiText,
             isUser: false,
-          };
+          },
+        ];
 
-          return updated;
-        });
+        updateCurrentChatMessages(updatedMessages);
       }
     } catch (err) {
       console.error(err);
@@ -60,19 +75,19 @@ export default function ChatWindow({ mode }) {
   };
 
   return (
-    <div className="flex flex-col flex-1">
-      {/* Messages */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4">
-        {messages.map((msg, index) => (
-          <Message key={index} text={msg.text} isUser={msg.isUser} />
-        ))}
-        {isThinking && (
-          <div className="text-gray-400 italic">NeuraCode is thinking...</div>
-        )}
-      </div>
+      <div className="flex flex-col flex-1">
+        {/* Messages */}
+        <div className="flex-1 p-4 overflow-y-auto space-y-4">
+          {messages.map((msg, index) => (
+            <Message key={index} text={msg.text} isUser={msg.isUser} />
+          ))}
+          {isThinking && (
+            <div className="text-gray-400 italic">NeuraCode is thinking...</div>
+          )}
+        </div>
 
-      {/* Input */}
-      <InputBox onSend={handleSendMessage} />
-    </div>
+        {/* Input */}
+        <InputBox onSend={handleSendMessage} />
+      </div>
   );
 }
