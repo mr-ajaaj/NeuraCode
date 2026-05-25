@@ -79,13 +79,39 @@ app.post("/chat", async (req, res) => {
         User request:
         ${message}
         `,
-        stream: false,
+        stream: true,
       }),
     });
 
-    const data = await response.json();
+    res.setHeader("Content-Type", "text/plain");
 
-    res.json({ reply: data.response });
+    const reader = response.body.getReader();
+
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+
+      if (done) break;
+
+      const chunk = decoder.decode(value);
+
+      const lines = chunk.split("\n");
+
+      for (const line of lines) {
+        if (!line) continue;
+
+        try {
+          const parsed = JSON.parse(line);
+
+          res.write(parsed.response || "");
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    }
+
+    res.end();
   } catch (error) {
     res.status(500).json({ error: "AI error" });
   }

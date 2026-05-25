@@ -23,14 +23,32 @@ export default function ChatWindow({ mode }) {
         }),
       });
 
-      const data = await res.json();
+      const reader = res.body.getReader();
 
-      const aiMessage = {
-        text: data.reply,
-        isUser: false,
-      };
+      const decoder = new TextDecoder();
 
-      setMessages((prev) => [...prev, aiMessage]);
+      let aiText = "";
+
+      setMessages((prev) => [...prev, { text: "", isUser: false }]);
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        aiText += decoder.decode(value);
+
+        setMessages((prev) => {
+          const updated = [...prev];
+
+          updated[updated.length - 1] = {
+            text: aiText,
+            isUser: false,
+          };
+
+          return updated;
+        });
+      }
     } catch (err) {
       console.error(err);
     }
