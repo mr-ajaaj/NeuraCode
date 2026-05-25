@@ -26,8 +26,30 @@ export default function InputBox({ onSend }) {
     reader.readAsText(file);
   };
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+
+    const file = e.dataTransfer.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const content = reader.result;
+
+      onSend(`📂 Uploaded File: ${file.name}`, content);
+    };
+
+    reader.readAsText(file);
+  };
+
   return (
-    <div className="p-4 border-t border-gray-700 flex gap-2">
+    <div
+      className="p-4 border-t border-gray-700 flex gap-2"
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={handleDrop}
+    >
       <input
         type="text"
         className="flex-1 p-2 rounded bg-gray-800 outline-none"
