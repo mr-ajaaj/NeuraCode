@@ -7,9 +7,12 @@ export default function ChatWindow({ mode }) {
     { text: "Hello 👋 I'm NeuraCode", isUser: false },
   ]);
 
+  const [isThinking, setIsThinking] = useState(false);
+
   const handleSendMessage = async (text, fileContent = null) => {
     const userMessage = { text, isUser: true };
     setMessages((prev) => [...prev, userMessage]);
+    setIsThinking(true);
 
     try {
       const res = await fetch("http://localhost:5000/chat", {
@@ -38,6 +41,8 @@ export default function ChatWindow({ mode }) {
 
         aiText += decoder.decode(value);
 
+        setIsThinking(false);
+
         setMessages((prev) => {
           const updated = [...prev];
 
@@ -61,6 +66,9 @@ export default function ChatWindow({ mode }) {
         {messages.map((msg, index) => (
           <Message key={index} text={msg.text} isUser={msg.isUser} />
         ))}
+        {isThinking && (
+          <div className="text-gray-400 italic">NeuraCode is thinking...</div>
+        )}
       </div>
 
       {/* Input */}
