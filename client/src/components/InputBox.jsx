@@ -10,6 +10,22 @@ export default function InputBox({ onSend }) {
     setInput("");
   };
 
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const content = reader.result;
+
+      onSend(`Analyze this code:\n\n${content}`);
+    };
+
+    reader.readAsText(file);
+  };
+
   return (
     <div className="p-4 border-t border-gray-700 flex gap-2">
       <input
@@ -19,6 +35,7 @@ export default function InputBox({ onSend }) {
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
+      <input type="file" onChange={handleFileUpload} />
 
       <button onClick={handleSend} className="bg-blue-600 px-4 rounded">
         Send
