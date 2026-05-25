@@ -7,7 +7,7 @@ export default function ChatWindow({ mode }) {
     { text: "Hello 👋 I'm NeuraCode", isUser: false },
   ]);
 
-  const handleSendMessage = async (text) => {
+  const handleSendMessage = async (text, fileContent = null) => {
     const userMessage = { text, isUser: true };
     setMessages((prev) => [...prev, userMessage]);
 
@@ -18,8 +18,8 @@ export default function ChatWindow({ mode }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: text,
-          mode: mode,
+          message: fileContent ? `Analyze this code:\n\n${fileContent}` : text,
+          mode,
         }),
       });
 
@@ -56,7 +56,6 @@ export default function ChatWindow({ mode }) {
 
   return (
     <div className="flex flex-col flex-1">
-      
       {/* Messages */}
       <div className="flex-1 p-4 overflow-y-auto space-y-4">
         {messages.map((msg, index) => (

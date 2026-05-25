@@ -20,7 +20,7 @@ export default function InputBox({ onSend }) {
     reader.onload = () => {
       const content = reader.result;
 
-      onSend(`Analyze this code:\n\n${content}`);
+      onSend(`📂 Uploaded File: ${file.name}`, content);
     };
 
     reader.readAsText(file);
