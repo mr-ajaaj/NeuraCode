@@ -5,6 +5,7 @@ export default function Sidebar({
   createNewChat,
   currentChatId,
   selectChat,
+  deleteChat,
 }) {
   const modes = ["Auto", "Explain", "Debug", "Refactor"];
 
@@ -40,7 +41,19 @@ export default function Sidebar({
               currentChatId === chat.id ? "bg-gray-700" : "hover:bg-gray-700"
             }`}
           >
-            {chat.title}
+            <div className="flex justify-between items-center">
+              <span>{chat.title}</span>
+
+              <button
+                className="cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteChat(chat.id);
+                }}
+              >
+                🗑️
+              </button>
+            </div>
           </div>
         ))}
       </div>

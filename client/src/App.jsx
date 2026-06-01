@@ -50,11 +50,39 @@ function App() {
     setChats((prev) => [...prev, newChat]);
 
     setCurrentChatId(newChat.id);
-
+    
   };
 
   const selectChat = (chat) => {
     setCurrentChatId(chat.id);
+  };
+
+  const deleteChat = (chatId) => {
+    const updatedChats = chats.filter((chat) => chat.id !== chatId);
+
+    if (updatedChats.length === 0) {
+      const newChat = {
+        id: Date.now(),
+        title: "New Chat",
+        messages: [
+          {
+            text: "Hello 👋 I'm NeuraCode",
+            isUser: false,
+          },
+        ],
+      };
+
+      setChats([newChat]);
+      setCurrentChatId(newChat.id);
+
+      return;
+    }
+
+    setChats(updatedChats);
+
+    if (currentChatId === chatId) {
+      setCurrentChatId(updatedChats[0].id);
+    }
   };
 
   useEffect(() => {
@@ -70,6 +98,7 @@ function App() {
         createNewChat={createNewChat}
         currentChatId={currentChatId}
         selectChat={selectChat}
+        deleteChat={deleteChat}
       />
       <ChatWindow
         mode={mode}
