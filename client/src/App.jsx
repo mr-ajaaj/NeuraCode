@@ -1,13 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ChatWindow from "./components/ChatWindow";
 import Sidebar from "./components/Sidebar";
 
 function App() {
   const [mode, setMode] = useState("Auto");
 
-  const [chats, setChats] = useState([
-    {
-      id: 1,
+  const [chats, setChats] = useState(() => {
+    const savedChats = localStorage.getItem("neuracode-chats");
+
+    return savedChats
+      ? JSON.parse(savedChats)
+      : [
+          {
+            id: 1,
+            title: "New Chat",
+            messages: [
+              {
+                text: "Hello 👋 I'm NeuraCode",
+                isUser: false,
+              },
+            ],
+          },
+        ];
+  });
+
+  const [currentChatId, setCurrentChatId] = useState(() => {
+    return Number(localStorage.getItem("neuracode-current-chat")) || 1;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("neuracode-current-chat", currentChatId);
+  }, [currentChatId]);
+
+  const currentChat =
+    chats.find((chat) => chat.id === currentChatId) || chats[0];
+
+  const createNewChat = () => {
+    const newChat = {
+      id: Date.now(),
       title: "New Chat",
       messages: [
         {
@@ -15,18 +45,6 @@ function App() {
           isUser: false,
         },
       ],
-    },
-  ]);
-
-  const [currentChatId, setCurrentChatId] = useState(1);
-
-  const currentChat = chats.find((chat) => chat.id === currentChatId);
-
-  const createNewChat = () => {
-    const newChat = {
-      id: Date.now(),
-      title: "New Chat",
-      messages: [],
     };
 
     setChats((prev) => [...prev, newChat]);
@@ -38,6 +56,10 @@ function App() {
   const selectChat = (chat) => {
     setCurrentChatId(chat.id);
   };
+
+  useEffect(() => {
+    localStorage.setItem("neuracode-chats", JSON.stringify(chats));
+  }, [chats]);
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">
