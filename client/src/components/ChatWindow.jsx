@@ -22,6 +22,18 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
 
   const handleSendMessage = async (text, fileContent = null) => {
     const userMessage = { text, isUser: true };
+    if (currentChat.title === "New Chat") {
+      setChats((prevChats) =>
+        prevChats.map((chat) =>
+          chat.id === currentChat.id
+            ? {
+                ...chat,
+                title: text.length > 25 ? text.slice(0, 25) + "..." : text,
+              }
+            : chat,
+        ),
+      );
+    }
     updateCurrentChatMessages([...messages, userMessage]);
     setIsThinking(true);
 
@@ -75,19 +87,19 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
   };
 
   return (
-      <div className="flex flex-col flex-1">
-        {/* Messages */}
-        <div className="flex-1 p-4 overflow-y-auto space-y-4">
-          {messages.map((msg, index) => (
-            <Message key={index} text={msg.text} isUser={msg.isUser} />
-          ))}
-          {isThinking && (
-            <div className="text-gray-400 italic">NeuraCode is thinking...</div>
-          )}
-        </div>
-
-        {/* Input */}
-        <InputBox onSend={handleSendMessage} />
+    <div className="flex flex-col flex-1">
+      {/* Messages */}
+      <div className="flex-1 p-4 overflow-y-auto space-y-4">
+        {messages.map((msg, index) => (
+          <Message key={index} text={msg.text} isUser={msg.isUser} />
+        ))}
+        {isThinking && (
+          <div className="text-gray-400 italic">NeuraCode is thinking...</div>
+        )}
       </div>
+
+      {/* Input */}
+      <InputBox onSend={handleSendMessage} />
+    </div>
   );
 }
