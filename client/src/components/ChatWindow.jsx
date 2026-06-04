@@ -46,13 +46,25 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
     setIsThinking(true);
 
     try {
+      const conversationHistory = messages
+        .map((msg) => `${msg.isUser ? "User" : "Assistant"}: ${msg.text}`)
+        .join("\n");
+
+      const finalMessage = fileContent
+        ? `Analyze this code:\n\n${fileContent}`
+        : `
+        ${conversationHistory}
+
+        User: ${text}
+        `;
+
       const res = await fetch("http://localhost:5000/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: fileContent ? `Analyze this code:\n\n${fileContent}` : text,
+          message: finalMessage,
           mode,
         }),
       });
