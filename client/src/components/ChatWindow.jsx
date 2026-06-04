@@ -64,7 +64,15 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: finalMessage,
+          message: fileContent
+            ? `
+            File:
+            ${text}
+
+            Content:
+            ${fileContent}
+            `
+            : finalMessage,
           mode,
         }),
       });
