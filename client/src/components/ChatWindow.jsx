@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import InputBox from "./InputBox";
 import Message from "./Message";
 
 export default function ChatWindow({ mode, chats, setChats, currentChat }) {
   const [isThinking, setIsThinking] = useState(false);
 
+  const messagesEndRef = useRef(null);
+
   const messages = currentChat.messages;
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages]);
 
   const updateCurrentChatMessages = (newMessages) => {
     setChats((prevChats) =>
@@ -93,6 +101,8 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
         {messages.map((msg, index) => (
           <Message key={index} text={msg.text} isUser={msg.isUser} />
         ))}
+
+        <div ref={messagesEndRef}></div>
         {isThinking && (
           <div className="text-gray-400 italic">NeuraCode is thinking...</div>
         )}
