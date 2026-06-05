@@ -10,20 +10,27 @@ export default function InputBox({ onSend }) {
     setInput("");
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
+  const handleFileUpload = async (e) => {
+    const files = Array.from(e.target.files);
 
-    if (!file) return;
+    if (!files.length) return;
 
-    const reader = new FileReader();
+    let projectContent = "";
 
-    reader.onload = () => {
-      const content = reader.result;
+    for (const file of files) {
+      const content = await file.text();
 
-      onSend(`📂 Uploaded File: ${file.name}`, content);
-    };
+      projectContent += `
+        ====================
+        FILE: ${file.name}
+        ====================
 
-    reader.readAsText(file);
+        ${content}
+
+      `;
+    }
+
+    onSend(`📂 Project Analysis (${files.length} files)`, projectContent);
   };
 
   const handleDrop = (e) => {
@@ -57,7 +64,7 @@ export default function InputBox({ onSend }) {
         value={input}
         onChange={(e) => setInput(e.target.value)}
       />
-      <input type="file" onChange={handleFileUpload} />
+      <input type="file" onChange={handleFileUpload} multiple />
 
       <button onClick={handleSend} className="bg-blue-600 px-4 rounded">
         Send

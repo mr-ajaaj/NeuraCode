@@ -6,11 +6,46 @@ app.use(cors());
 app.use(express.json());
 
 app.post("/chat", async (req, res) => {
-  const { message, mode } = req.body;
+  const { message, mode, task } = req.body;
 
   let systemPrompt = "";
 
-  if (mode === "Explain") {
+  if (task === "project-analysis") {
+    systemPrompt = `
+      You are a senior software architect.
+
+      Analyze the provided software project.
+
+      Provide:
+
+      # Project Overview
+      Explain what the project does.
+
+      # Technologies Used
+      Identify languages, frameworks and tools.
+
+      # File Responsibilities
+      Explain the role of each file.
+
+      # Architecture Review
+      Evaluate the project structure.
+
+      # Bugs and Risks
+      Identify potential issues.
+
+      # Code Quality
+      Evaluate readability and maintainability.
+
+      # Improvements
+      Suggest practical improvements.
+
+      # Final Score
+      Give a score from 1 to 10 with justification.
+
+      If some project files are missing,
+      mention the limitations of your analysis.
+      `;
+  } else if (mode === "Explain") {
     systemPrompt = `
     You are NeuraCode AI.
 
