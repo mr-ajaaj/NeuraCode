@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function InputBox({ onSend }) {
+export default function InputBox({ onSend, analysisType, setAnalysisType }) {
   const [input, setInput] = useState("");
 
   const handleSend = () => {
@@ -65,6 +65,15 @@ export default function InputBox({ onSend }) {
         onChange={(e) => setInput(e.target.value)}
       />
       <input type="file" onChange={handleFileUpload} multiple />
+      <select
+        value={analysisType}
+        onChange={(e) => setAnalysisType(e.target.value)}
+        className="bg-gray-800 p-2 rounded outline-none"
+      >
+        <option value="project-analysis">Project Analysis</option>
+
+        <option value="deep-analysis">Deep Analysis</option>
+      </select>
 
       <button onClick={handleSend} className="bg-blue-600 px-4 rounded">
         Send

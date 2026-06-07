@@ -5,6 +5,8 @@ import Message from "./Message";
 export default function ChatWindow({ mode, chats, setChats, currentChat }) {
   const [isThinking, setIsThinking] = useState(false);
 
+  const [analysisType, setAnalysisType] = useState("project-analysis");
+
   const messagesEndRef = useRef(null);
 
   const messages = currentChat.messages;
@@ -66,7 +68,7 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
         body: JSON.stringify({
           message: fileContent ? fileContent : finalMessage,
           mode,
-          task: fileContent ? "project-analysis" : "chat",
+          task: fileContent ? analysisType : "chat",
         }),
       });
 
@@ -122,7 +124,11 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
       </div>
 
       {/* Input */}
-      <InputBox onSend={handleSendMessage} />
+      <InputBox
+        onSend={handleSendMessage}
+        analysisType={analysisType}
+        setAnalysisType={setAnalysisType}
+      />
     </div>
   );
 }

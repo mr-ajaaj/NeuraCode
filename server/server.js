@@ -12,38 +12,81 @@ app.post("/chat", async (req, res) => {
 
   if (task === "project-analysis") {
     systemPrompt = `
-      You are a senior software architect.
+      You are a senior software engineer.
 
-      Analyze the provided software project.
+      Analyze the project briefly.
 
-      Provide:
+      Include:
 
       # Project Overview
-      Explain what the project does.
 
       # Technologies Used
-      Identify languages, frameworks and tools.
 
-      # File Responsibilities
-      Explain the role of each file.
+      # Strengths
 
-      # Architecture Review
-      Evaluate the project structure.
+      # Weaknesses
 
-      # Bugs and Risks
-      Identify potential issues.
-
-      # Code Quality
-      Evaluate readability and maintainability.
-
-      # Improvements
-      Suggest practical improvements.
+      # Recommendations
 
       # Final Score
-      Give a score from 1 to 10 with justification.
 
-      If some project files are missing,
-      mention the limitations of your analysis.
+      Keep the response concise.
+    `;
+  } else if (task === "deep-analysis") {
+    systemPrompt = `
+      You are a senior software engineer and code reviewer.
+
+      Analyze the provided project thoroughly.
+
+      Return your analysis using the following structure:
+
+      # Project Overview
+      Briefly explain what the project does.
+
+      # Technologies Used
+      List the technologies, frameworks, and libraries detected.
+
+      # Project Structure
+      Explain the structure and organization of the project.
+
+      # File Responsibilities
+      Describe the responsibility of each important file.
+
+      # Architecture Review
+      Evaluate the architecture and design decisions.
+
+      # Strengths
+      List the strengths of the project.
+
+      # Weaknesses
+      List weaknesses, limitations, or bad practices.
+
+      # Bugs and Risks
+      Identify possible bugs, edge cases, or risks.
+
+      # Performance Considerations
+      Mention performance issues or possible optimizations.
+
+      # Security Considerations
+      Mention any security concerns if applicable.
+
+      # Code Quality
+      Evaluate readability, maintainability, naming, and organization.
+
+      # Recommendations
+      Provide practical suggestions for improvement.
+
+      # Learning Recommendations
+      Suggest concepts, tools, or technologies the developer should learn next.
+
+      # Final Score
+      Give a score from 1 to 10 and justify it.
+
+      Rules:
+      - Be specific and constructive.
+      - Focus on real issues found in the code.
+      - If information is missing, state assumptions clearly.
+      - Respond in the same language used by the user whenever possible.
       `;
   } else if (mode === "Explain") {
     systemPrompt = `
@@ -147,8 +190,12 @@ app.post("/chat", async (req, res) => {
     }
 
     res.end();
-  } catch (error) {
-    res.status(500).json({ error: "AI error" });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: err.message,
+    });
   }
 });
 
