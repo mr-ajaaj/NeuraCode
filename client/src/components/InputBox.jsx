@@ -5,7 +5,7 @@ export default function InputBox({ onSend, analysisType, setAnalysisType }) {
   const [files, setFiles] = useState([]);
 
   const handleSend = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() && files.length === 0) return;
 
     if (files.length > 0) {
       let projectContent = "";
@@ -22,7 +22,11 @@ export default function InputBox({ onSend, analysisType, setAnalysisType }) {
           `;
       }
 
-      onSend(`📂 Project Analysis (${files.length} files)`, projectContent);
+      onSend(
+        `📂 Project Analysis (${files.length} files)`,
+        projectContent,
+        analysisType,
+      );
 
       setFiles([]);
     } else {

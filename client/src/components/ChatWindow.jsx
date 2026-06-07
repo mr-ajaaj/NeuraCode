@@ -5,6 +5,8 @@ import Message from "./Message";
 export default function ChatWindow({ mode, chats, setChats, currentChat }) {
   const [isThinking, setIsThinking] = useState(false);
 
+  const [status, setStatus] = useState("");
+
   const [analysisType, setAnalysisType] = useState("project-analysis");
 
   const messagesEndRef = useRef(null);
@@ -30,7 +32,7 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
     );
   };
 
-  const handleSendMessage = async (text, fileContent = null) => {
+  const handleSendMessage = async (text, fileContent = null, analysisType = "project-analysis") => {
     const userMessage = { text, isUser: true };
     if (currentChat.title === "New Chat") {
       setChats((prevChats) =>
@@ -46,6 +48,16 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
     }
     updateCurrentChatMessages([...messages, userMessage]);
     setIsThinking(true);
+
+    if (fileContent) {
+      setStatus(
+        analysisType === "deep-analysis"
+          ? "🧠 Deep analyzing project..."
+          : "🔍 Analyzing project...",
+      );
+    } else {
+      setStatus("NeuraCode is thinking...");
+    }
 
     try {
       const conversationHistory = messages
@@ -104,8 +116,13 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
 
         updateCurrentChatMessages(updatedMessages);
       }
+
+      setStatus("");
     } catch (err) {
       console.error(err);
+
+      setStatus("");
+      setIsThinking(false);
     }
   };
 
@@ -118,9 +135,7 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
         ))}
 
         <div ref={messagesEndRef}></div>
-        {isThinking && (
-          <div className="text-gray-400 italic">NeuraCode is thinking...</div>
-        )}
+        {isThinking && <div className="text-gray-400 italic">{status}</div>}
       </div>
 
       {/* Input */}
