@@ -2,11 +2,32 @@ import { useState } from "react";
 
 export default function InputBox({ onSend, analysisType, setAnalysisType }) {
   const [input, setInput] = useState("");
+  const [files, setFiles] = useState([]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
-    onSend(input);
+    if (files.length > 0) {
+      let projectContent = "";
+
+      for (const file of files) {
+        const content = await file.text();
+
+        projectContent += `
+          ====================
+          FILE: ${file.name}
+          ====================
+
+          ${content}
+          `;
+      }
+
+      onSend(`📂 Project Analysis (${files.length} files)`, projectContent);
+
+      setFiles([]);
+    } else {
+      onSend(input);
+    }
     setInput("");
   };
 
@@ -15,22 +36,9 @@ export default function InputBox({ onSend, analysisType, setAnalysisType }) {
 
     if (!files.length) return;
 
-    let projectContent = "";
+    const selectedFiles = Array.from(e.target.files);
 
-    for (const file of files) {
-      const content = await file.text();
-
-      projectContent += `
-        ====================
-        FILE: ${file.name}
-        ====================
-
-        ${content}
-
-      `;
-    }
-
-    onSend(`📂 Project Analysis (${files.length} files)`, projectContent);
+    setFiles(selectedFiles);
   };
 
   const handleDrop = (e) => {
@@ -57,6 +65,26 @@ export default function InputBox({ onSend, analysisType, setAnalysisType }) {
       onDragOver={(e) => e.preventDefault()}
       onDrop={handleDrop}
     >
+      {files.length > 0 && (
+        <div className="mb-2">
+          {files.map((file) => (
+            <div
+              key={file.name}
+              className="flex justify-between items-center text-sm"
+            >
+              <span>📎 {file.name}</span>
+
+              <button
+                onClick={() =>
+                  setFiles((prev) => prev.filter((f) => f.name !== file.name))
+                }
+              >
+                ❌
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
       <input
         type="text"
         className="flex-1 p-2 rounded bg-gray-800 outline-none"
