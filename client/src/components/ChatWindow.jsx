@@ -32,7 +32,11 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
     );
   };
 
-  const handleSendMessage = async (text, fileContent = null, analysisType = "project-analysis") => {
+  const handleSendMessage = async (
+    text,
+    fileContent = null,
+    analysisType = "project-analysis",
+  ) => {
     const userMessage = { text, isUser: true };
     if (currentChat.title === "New Chat") {
       setChats((prevChats) =>
@@ -40,7 +44,13 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
           chat.id === currentChat.id
             ? {
                 ...chat,
-                title: text.length > 25 ? text.slice(0, 25) + "..." : text,
+                title: text.startsWith("📂")
+                  ? analysisType === "deep-analysis"
+                    ? "Deep Project Analysis"
+                    : "Project Analysis"
+                  : text.length > 25
+                    ? text.slice(0, 25) + "..."
+                    : text,
               }
             : chat,
         ),
