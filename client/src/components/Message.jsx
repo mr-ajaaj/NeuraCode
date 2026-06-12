@@ -8,6 +8,18 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 export default function Message({ text, isUser }) {
   const [copiedCode, setCopiedCode] = useState(null);
 
+  const [copiedMessage, setCopiedMessage] = useState(false);
+
+  const copyMessage = () => {
+    navigator.clipboard.writeText(text);
+
+    setCopiedMessage(true);
+
+    setTimeout(() => {
+      setCopiedMessage(false);
+    }, 2000);
+  };
+
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
@@ -56,6 +68,14 @@ export default function Message({ text, isUser }) {
         >
           {text}
         </ReactMarkdown>
+        {!isUser && (
+          <button
+            onClick={copyMessage}
+            className="mb-2 text-xs text-gray-300 hover:text-white"
+          >
+            {copiedMessage ? "Copied ✅" : "📋 Copy response"}
+          </button>
+        )}
       </div>
     </div>
   );
