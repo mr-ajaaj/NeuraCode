@@ -146,6 +146,15 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
 
       console.error(err);
 
+      updateCurrentChatMessages([
+        ...messages,
+        userMessage,
+        {
+          text: "❌ Failed to get response from AI. Please try again.",
+          isUser: false,
+        },
+      ]);
+
       setIsThinking(false);
       setIsGenerating(false);
       setStatus("");
