@@ -5,9 +5,13 @@ import Message from "./Message";
 export default function ChatWindow({ mode, chats, setChats, currentChat }) {
   const [isThinking, setIsThinking] = useState(false);
 
+  const [isGenerating, setIsGenerating] = useState(false);
+
   const [status, setStatus] = useState("");
 
   const [analysisType, setAnalysisType] = useState("project-analysis");
+
+  const controllerRef = useRef(null);
 
   const messagesEndRef = useRef(null);
 
@@ -58,6 +62,7 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
     }
     updateCurrentChatMessages([...messages, userMessage]);
     setIsThinking(true);
+    setIsGenerating(true);
 
     if (fileContent) {
       setStatus(
@@ -81,12 +86,14 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
 
         User: ${text}
         `;
+      controllerRef.current = new AbortController();
 
       const res = await fetch("http://localhost:5000/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        signal: controllerRef.current.signal,
         body: JSON.stringify({
           message: fileContent ? fileContent : finalMessage,
           mode,
@@ -127,15 +134,31 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
         updateCurrentChatMessages(updatedMessages);
       }
 
+      setIsGenerating(false);
       setStatus("");
     } catch (err) {
+      if (err.name === "AbortError") {
+        setIsThinking(false);
+        setIsGenerating(false);
+        setStatus("");
+        return;
+      }
+
       console.error(err);
 
-      setStatus("");
       setIsThinking(false);
+      setIsGenerating(false);
+      setStatus("");
     }
   };
 
+  const stopGenerating = () => {
+    controllerRef.current?.abort();
+
+    setIsThinking(false);
+    setIsGenerating(false);
+    setStatus("");
+  };
   return (
     <div className="flex flex-col flex-1">
       {/* Messages */}
@@ -147,6 +170,15 @@ export default function ChatWindow({ mode, chats, setChats, currentChat }) {
         <div ref={messagesEndRef}></div>
         {isThinking && <div className="text-gray-400 italic">{status}</div>}
       </div>
+
+      {isGenerating && (
+        <button
+          onClick={stopGenerating}
+          className="mx-4 mb-2 bg-red-600 px-4 py-2 rounded"
+        >
+          Stop Generating
+        </button>
+      )}
 
       {/* Input */}
       <InputBox
